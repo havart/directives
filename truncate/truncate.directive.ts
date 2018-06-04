@@ -1,14 +1,19 @@
 import { Directive, ElementRef, Input, Host, Renderer2, AfterViewInit, ViewContainerRef, NgZone } from '@angular/core';
-import { MdTooltip, Overlay, ScrollDispatcher, Platform, Directionality, ScrollStrategy } from '@angular/material';
+
 import { toInteger } from 'lodash';
-import { AriaDescriber } from '@angular/cdk/a11y';
+import { AriaDescriber, FocusMonitor } from '@angular/cdk/a11y';
+import { MatTooltip } from '@angular/material';
+import { Overlay, ScrollDispatcher } from '@angular/cdk/overlay';
+import { Platform } from '@angular/cdk/platform';
+import { Directionality } from '@angular/cdk/bidi';
+
 
 @Directive({
-  selector: '[truncate]'
+  selector: '[appTruncate]'
 })
-export class TruncateDirective extends MdTooltip implements AfterViewInit {
+export class TruncateDirective extends MatTooltip implements AfterViewInit {
 
-  @Input() public truncateSize: number; // auto|300|100
+  @Input() public truncateSize: string; // 300|100
   @Input() public truncateText: string; // text for tooltip
 
   constructor(
@@ -20,9 +25,9 @@ export class TruncateDirective extends MdTooltip implements AfterViewInit {
     private ngZone: NgZone,
     private platform: Platform,
     private ariaDescriber: AriaDescriber,
+    private focusMonitor: FocusMonitor,
     private dir: Directionality) {
     super(
-      renderer,
       overlay,
       el,
       scrollDispatcher,
@@ -30,7 +35,8 @@ export class TruncateDirective extends MdTooltip implements AfterViewInit {
       ngZone,
       platform,
       ariaDescriber,
-      (r) => r,
+      focusMonitor,
+      () => { },
       dir
     );
   }
@@ -38,7 +44,7 @@ export class TruncateDirective extends MdTooltip implements AfterViewInit {
   public ngAfterViewInit() {
     const width = this.el.nativeElement.offsetWidth;
     const size = toInteger(this.truncateSize);
-    if (size && size < width) {
+    if (size < width) {
       this.renderer.addClass(this.el.nativeElement, 'truncate');
       this.renderer.setStyle(this.el.nativeElement, 'width', this.truncateSize + 'px');
       this.message = this.truncateText;
