@@ -39,11 +39,8 @@ export class TruncateDirective extends MdTooltip implements AfterViewInit {
     const width = this.el.nativeElement.offsetWidth;
     const size = toInteger(this.truncateSize);
     if (size && size < width) {
-      this.renderer.setStyle(this.el.nativeElement, 'display', 'inline-block');
+      this.renderer.addClass(this.el.nativeElement, 'truncate');
       this.renderer.setStyle(this.el.nativeElement, 'width', this.truncateSize + 'px');
-      this.renderer.setStyle(this.el.nativeElement, 'white-space', 'nowrap');
-      this.renderer.setStyle(this.el.nativeElement, 'overflow', 'hidden');
-      this.renderer.setStyle(this.el.nativeElement, 'text-overflow', 'ellipsis');
       this.message = this.truncateText;
       this.position = 'above';
     }
